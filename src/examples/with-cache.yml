@@ -10,25 +10,17 @@ usage:
       docker:
         - image: cimg/base:stable
       steps:
-        - checkout
-        - run:
-            name: Setup Environment Variables and Version file
-            command: |
-              echo 'export V_TERRAFORM="0.14.4"' >> $BASH_ENV
-              echo "${V_TERRAFORM}" > _terraform_
         - cache/with-cache:
-            key: cache-v1-terraform-{{ checksum "_terraform_" }}
-            path: /usr/local/bin/terraform
+            key: cache-v1-test-{{ .Branch }}-{{ .Revision }}
+            path: test.txt
             steps:
               - run:
-                  name: Install
+                  name: prepare
                   command: |
-                    if [ ! -f /usr/local/bin/terraform ]; then
-                      curl -Ls -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/${V_TERRAFORM}/terraform_${V_TERRAFORM}_linux_amd64.zip
-                      unzip /tmp/terraform.zip -d /tmp/
-                      sudo mv /tmp/terraform /usr/local/bin/terraform
+                    if [ ! -f test.txt ]; then
+                      echo $CIRCLE_SHA1 > test.txt
                     fi
-        - run: terraform version
+        - run: cat test.txt
   workflows:
     build:
       jobs:
