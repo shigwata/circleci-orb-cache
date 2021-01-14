@@ -27,6 +27,22 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
+      - run:
+          name: Setup Environment Variables and Version file
+          command: |
+            echo 'export V_TERRAFORM="0.14.4"' >> $BASH_ENV
+            echo "${V_TERRAFORM}" > _terraform_
+      - cache/with-cache:
+          key: cache-v1-terraform-{{ checksum "_terraform_" }}
+          path: /usr/local/bin/terraform
+          steps:
+            - run:
+                name: Install
+                command: |
+                  if [ ! -f /usr/local/bin/terraform ]; then
+                    curl -Ls -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/${V_TERRAFORM}/terraform_${V_TERRAFORM}_linux_amd64.zip && unzip /tmp/terraform.zip -d /usr/local/bin
+                  fi
+      - run: terraform version
 
 workflows:
   # Prior to producing a development orb (which requires credentials) basic validation, linting, and even unit testing can be performed.
