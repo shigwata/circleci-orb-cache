@@ -40,7 +40,9 @@ jobs:
                 name: Install
                 command: |
                   if [ ! -f /usr/local/bin/terraform ]; then
-                    curl -Ls -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/${V_TERRAFORM}/terraform_${V_TERRAFORM}_linux_amd64.zip && unzip /tmp/terraform.zip -d /usr/local/bin
+                    curl -Ls -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/${V_TERRAFORM}/terraform_${V_TERRAFORM}_linux_amd64.zip
+                    unzip /tmp/terraform.zip -d /tmp/
+                    sudo mv /tmp/terraform /usr/local/bin/terraform
                   fi
       - run: terraform version
 
