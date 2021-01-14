@@ -1,0 +1,19 @@
+description: >
+  Run a set of steps with cached.
+
+parameters:
+  key:
+    type: string
+  path:
+    type: string
+  steps:
+    type: steps
+
+steps:
+  - restore_cache:
+      key: <<parameters.key>>
+  - steps: <<parameters.steps>>
+  - save_cache:
+      key: <<parameters.key>>
+      paths:
+        - <<parameters.path>>
